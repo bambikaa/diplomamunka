@@ -1,0 +1,2 @@
+# diplomamunka
+diplomamunka kódok 
