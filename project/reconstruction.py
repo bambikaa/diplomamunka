@@ -42,14 +42,12 @@ def main():
     finite = np.isfinite(cosphi).mean()
     print(f"cosphi finite fraction: {finite:.3f}")
 
-    # ---------- Load UV tracks ----------
     g = np.load("gamma_earth_rotation.npz")
     u12, v12 = g["u12"][:len(t)], g["v12"][:len(t)]
     u23, v23 = g["u23"][:len(t)], g["v23"][:len(t)]
     u31, v31 = g["u31"][:len(t)], g["v31"][:len(t)]
     full_uv = (t, u12, v12, u23, v23, u31, v31)
 
-    # ---------- Load fixed source params ----------
     src = np.load("source_image.npz", allow_pickle=True)
     N = int(src["N"])
     fov = float(src["fov"])
@@ -66,8 +64,7 @@ def main():
     print(f"  A_true   = {float(A_true):.4f}")
     print(f"  phi_true = {np.rad2deg(float(phi_true)):.2f} deg")
 
-    # ---------- Thinning for speed ----------
-    thin = 1  # set 2 or 3 if slow
+    thin = 1  
     sl = slice(None, None, thin)
     t_fit = t[sl]
     uv_fit = (t_fit, u12[sl], v12[sl], u23[sl], v23[sl], u31[sl], v31[sl])
@@ -81,7 +78,7 @@ def main():
     print("\nWeight scales:")
     print(f"  s2(RMS g2-1) = {s2:.3e}, s3(RMS g3-1) = {s3:.3e}")
 
-    # ---------- COARSE reconstruction ----------
+    #COARSE reconstruction
     A_grid1 = np.linspace(0.0, 0.4, 41)                 # 0.01
     phi_grid1 = np.deg2rad(np.arange(-180, 181, 5))     # 5 deg
 
@@ -98,7 +95,7 @@ def main():
     print(f"  phi0 = {np.rad2deg(phi_best0):.2f} deg")
     print(f"  chi2 = {chi_best0:.6g}")
 
-    # ---------- Find ALL valleys on coarse grid ----------
+    #Find all valleys on coarse grid
     chi_min = float(np.min(chi_coarse))
     chi_max = float(np.max(chi_coarse))
     tol = 0.001 * (chi_max - chi_min)  # plateau tolerance
@@ -112,7 +109,7 @@ def main():
     print(f"\nLocal-min pixels: {len(mins)}  -> clustered valleys: {len(valleys)}")
     topM = min(10, len(valleys))
 
-    # ---------- Refine each valley locally ----------
+    #Refine each valley locally
     refined = []
     print("\nRefining top valleys...")
     for r in range(topM):
@@ -133,7 +130,7 @@ def main():
     A_best = refined[0][1]
     phi_best = refined[0][2]
 
-    # ---------- Compare truth chi2 on coarse grid ----------
+    #Compare truth chi2 on coarse grid 
     i_truth = int(np.argmin(np.abs(A_grid1 - float(A_true))))
     j_truth = int(np.argmin(np.abs(wrap_deg(phi_grid1_deg - np.rad2deg(float(phi_true))))))
     chi_truth = float(chi_coarse[i_truth, j_truth])
@@ -145,7 +142,7 @@ def main():
     print(f"  chi2 truth = {chi_truth:.6g}")
     print(f"  ratio truth/best = {chi_truth/chi_best:.6f}")
 
-    # ---------- Save everything ----------
+    #  Save everything 
     np.savez(
         "recon_and_valleys_outputs.npz",
         A_grid1=A_grid1, phi_grid1=phi_grid1, chi_coarse=chi_coarse,
@@ -155,10 +152,6 @@ def main():
         thin=thin, w2=w2, w3=w3, s2=s2, s3=s3
     )
     print("Saved: recon_and_valleys_outputs.npz")
-
-    # =========================
-    # PLOTS
-    # =========================
 
     # --- Plot g2-1 ---
     #plt.figure(figsize=(9, 5))
@@ -193,7 +186,7 @@ def main():
     #plt.tight_layout()
     #plt.show()
 
-    # --- Plot chi2 heatmap and mark valleys ---
+    #Plot chi2 heatmap and mark valleys
     plt.figure(figsize=(10, 5))
     extent = [phi_grid1_deg[0], phi_grid1_deg[-1], A_grid1[0], A_grid1[-1]]
     plt.imshow(chi_coarse, origin="lower", aspect="auto", extent=extent)
@@ -217,7 +210,7 @@ def main():
     plt.savefig("recon_chi2_coarse_with_valleys.png")
     plt.show()
 
-    # --- Overlay: data vs model for best + truth ---
+    # Overlay: data vs model for best + truth 
     m12_b, m23_b, m31_b, m3_b = model_g2_g3(A_best, phi_best, fixed, full_uv)
     m12_t, m23_t, m31_t, m3_t = model_g2_g3(float(A_true), float(phi_true), fixed, full_uv)
 

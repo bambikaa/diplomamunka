@@ -32,7 +32,7 @@ B = 80.0                 # baseline length
 u0 = B / lam          
 
 # time sampling 
-hours = 6.0
+hours = 6.0 #vegyük rövidebbre, 30 perc
 dt_minutes = 1.0
 t = np.arange(0.0, hours * 3600.0 + 0.5, dt_minutes * 60.0)  # seconds
 
