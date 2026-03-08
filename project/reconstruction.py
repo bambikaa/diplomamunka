@@ -15,8 +15,6 @@ from hbt_funcs import (
 )
 
 def main():
-
-    # ---------- Load averaged MC data ----------
     inp = "mc_hbt_ideal_avg_outputs.npz"
     d = np.load(inp)
 
