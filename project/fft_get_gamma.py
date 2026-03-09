@@ -111,8 +111,8 @@ delta_deg = 20.0
 alpha = np.deg2rad(alpha_deg)
 delta = np.deg2rad(delta_deg)
 
-# 30 minute
-dt_minutes = 30.0
+
+dt_minutes = 1.0
 dt_sec = dt_minutes * 60.0
 
 omega = 2.0 * np.pi / (24.0 * 3600.0)
@@ -130,7 +130,6 @@ H0 = np.arccos(cosH0)
 
 visible_duration_sec = 2.0 * H0 / omega
 
-# only full 30 minute blocks, no partial last block
 n_blocks = int(visible_duration_sec // dt_sec)
 
 t = (-H0 / omega) + (np.arange(n_blocks) + 0.5) * dt_sec
@@ -169,7 +168,7 @@ np.savez(
 
 print(f"Loaded: {inp}")
 print(f"Saved:  {out}")
-print(f"Kept {len(t)} samples (30 min blocks, no partial last block).")
+print(f"Kept {len(t)} samples")
 
 t_rise = -H0 / omega
 t_set = H0 / omega

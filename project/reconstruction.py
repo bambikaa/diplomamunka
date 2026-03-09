@@ -151,7 +151,7 @@ def main():
     )
     print("Saved: recon_and_valleys_outputs.npz")
 
-    # --- Plot g2-1 ---
+  
     #plt.figure(figsize=(9, 5))
     #plt.plot(th, g2_12 - 1.0, label=r"$g^{(2)}_{12}-1$")
     #plt.plot(th, g2_23 - 1.0, label=r"$g^{(2)}_{23}-1$")
@@ -163,7 +163,7 @@ def main():
     #plt.tight_layout()
     #plt.show()
 
-    # --- Plot g3-1 ---
+ 
     #plt.figure(figsize=(9, 5))
     #plt.plot(th, g3_123 - 1.0, label=r"$g^{(3)}_{123}-1$")
     #plt.xlabel("Time [hours]")
@@ -173,7 +173,7 @@ def main():
     #plt.tight_layout()
     #plt.show()
 
-    # --- Plot cos(phi_cl) from data ---
+
     #plt.figure(figsize=(9, 5))
     #plt.plot(th, cosphi, marker="o", markersize=2, linestyle="none", label=r"$\cos(\Phi_{\rm cl})$")
     #plt.xlabel("Time [hours]")
@@ -212,10 +212,14 @@ def main():
     m12_b, m23_b, m31_b, m3_b = model_g2_g3(A_best, phi_best, fixed, full_uv)
     m12_t, m23_t, m31_t, m3_t = model_g2_g3(float(A_true), float(phi_true), fixed, full_uv)
 
+    #30 min
+    step = 30
+    idx = np.arange(0, len(th), step)
+
     plt.figure(figsize=(10, 5))
-    plt.plot(th, g3_123, label="data g3")
-    plt.plot(th, m3_b, "--", label="model g3 (best)")
-    plt.plot(th, m3_t, ":", label="model g3 (truth)")
+    plt.plot(th[idx], g3_123[idx], label="data g3")
+    plt.plot(th[idx], m3_b[idx], "--", label="model g3 (best)")
+    plt.plot(th[idx], m3_t[idx], ":", label="model g3 (truth)")
     plt.xlabel("Time [hours]")
     plt.ylabel("g3")
     plt.title("Data vs model: g3")
@@ -225,9 +229,9 @@ def main():
     plt.show()
 
     plt.figure(figsize=(10, 5))
-    plt.plot(th, g2_12, label="data g2_12")
-    plt.plot(th, m12_b, "--", label="model g2_12 (best)")
-    plt.plot(th, m12_t, ":", label="model g2_12 (truth)")
+    plt.plot(th[idx], g2_12[idx], label="data g2_12")
+    plt.plot(th[idx], m12_b[idx], "--", label="model g2_12 (best)")
+    plt.plot(th[idx], m12_t[idx], ":", label="model g2_12 (truth)")
     plt.xlabel("Time [hours]")
     plt.ylabel("g2_12")
     plt.title("Data vs model: g2_12")

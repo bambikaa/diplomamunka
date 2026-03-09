@@ -1,5 +1,6 @@
 import numpy as np
 import time
+from tqdm import tqdm
 
 #generates complex gaussian noise
 def complex_standard_normal(shape, rng):
@@ -75,17 +76,19 @@ if __name__ == "__main__":
     jitters_max = np.empty(len(idx))
 
     # loop timepoints
-    for n, k in enumerate(idx):
+    for n, k in enumerate(tqdm(idx, desc="Timepoints", unit="t")):
         s12 = s23 = s31 = s3 = 0.0
         jmax = 0.0
 
-        # loop independent measurements
-        for r in range(Nreal):
-            rng = np.random.default_rng(seed0 + 1000000*n + r)  # deterministic but independent per (t,r)
+    # loop independent measurements
+        for r in tqdm(range(Nreal), desc="MC runs", leave=False):
+            rng = np.random.default_rng(seed0 + 1000000*n + r)
+
             g2_12, g2_23, g2_31, g3_123, jitter = one_measurement_g2_g3(
-                gamma12[k], gamma23[k], gamma31[k],
-                K=K, mu_counts=mu_counts, rng=rng
+            gamma12[k], gamma23[k], gamma31[k],
+            K=K, mu_counts=mu_counts, rng=rng
             )
+
             s12 += g2_12
             s23 += g2_23
             s31 += g2_31
